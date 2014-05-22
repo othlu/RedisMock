@@ -106,6 +106,29 @@ class RedisMock extends test
                 ->isFalse();
     }
 
+    public function testMget()
+    {
+        $redisMock = new Redis();
+
+        $this->assert
+            ->string($redisMock->set('test1', 'something1'))
+                ->isEqualTo('OK')
+            ->string($redisMock->set('test2', 'something2'))
+                ->isEqualTo('OK');
+
+        $this->assert
+            ->variable($redisMock->mget('test1'))
+                ->isEqualTo(array('something1'));
+
+        $this->assert
+            ->variable($redisMock->mget('test1', 'test2'))
+                ->isEqualTo(array('something1', 'something2'));
+
+        $this->assert
+            ->variable($redisMock->mget('test1', 'x', 'test2'))
+                ->isEqualTo(array('something1', null, 'something2'));
+    }
+
     public function testExpireTtl()
     {
         $redisMock = new Redis();

@@ -50,6 +50,25 @@ class RedisMock
         return $this->returnPipedInfo($this->data[$key]);
     }
 
+    public function mget()
+    {
+
+        $keys = func_get_args();
+        if (!is_array($keys)) {
+            $keys = array($keys);
+        }
+        $values = array();
+        foreach ($keys as $key) {
+            if (!isset($this->data[$key]) || is_array($this->data[$key]) || $this->deleteOnTtlExpired($key)) {
+                $values[] = null;
+            } else {
+                $values[] = $this->data[$key];
+            }
+        }
+
+        return $this->returnPipedInfo($values);
+    }
+
     public function set($key, $value, $seconds = null)
     {
         $this->data[$key]      = $value;
